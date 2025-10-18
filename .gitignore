@@ -12,6 +12,18 @@ dist
 dist-ssr
 *.local
 
+# Environment variables - NEVER commit these!
+.env
+.env.local
+.env.production
+.env.development
+python_api/.env
+supabase/functions/**/.env
+
+# Supabase
+.branches
+.temp
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
