@@ -1,73 +1,66 @@
-# Welcome to your Lovable project
+# Testworld - Local Development
 
-## Project info
+This project runs fully locally using Vite (React + TS), Supabase (Docker via CLI), and Ollama for AI generation.
 
-**URL**: https://lovable.dev/projects/838339cd-18c2-417c-abea-ef503fa289a4
+## Prerequisites
+- Node.js 18+ and npm
+- Docker Desktop
+- Supabase CLI (`brew install supabase/tap/supabase` or see docs)
+- Ollama installed and running (`brew install ollama`)
 
-## How can I edit this code?
-
-There are several ways of editing your application.
-
-**Use Lovable**
-
-Simply visit the [Lovable Project](https://lovable.dev/projects/838339cd-18c2-417c-abea-ef503fa289a4) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
+## Install & Run Web App
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
 npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+## Run Supabase locally
+Initialize and start the local stack (Postgres, API, Studio, Edge Runtime):
+```sh
+# From the project root where the supabase/ directory exists
+supabase start
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+# Apply existing migrations (if not automatically applied)
+supabase db reset --no-backup --force
 
-**Use GitHub Codespaces**
+# In a separate terminal, link the project locally (optional)
+# supabase link --project-ref <local>
+```
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+- Supabase Studio: http://localhost:54323
+- API URL and anon key are provided by `supabase start` output.
 
-## What technologies are used for this project?
+Create a `.env.local` file for the Vite app with your local Supabase creds:
+```sh
+# Vite reads import.meta.env.*
+VITE_SUPABASE_URL=http://localhost:54321
+VITE_SUPABASE_PUBLISHABLE_KEY=anon-key-from-supabase-start
+```
 
-This project is built with:
+## Edge Functions
+To run and test the edge function locally:
+```sh
+# Start edge functions dev server
+supabase functions serve --env-file .env.local --no-verify-jwt
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+# In the app, we invoke: supabase.functions.invoke('generate-entity', ...)
+# The SDK will call the local functions endpoint when VITE_SUPABASE_URL points to localhost.
+```
 
-## How can I deploy this project?
+## Ollama for AI
+Install and start Ollama, then pull a chat model:
+```sh
+ollama serve &
+ollama pull llama3.1
+```
+The edge function `supabase/functions/generate-entity/index.ts` calls `http://localhost:11434/api/chat` with model `llama3.1`.
 
-Simply open [Lovable](https://lovable.dev/projects/838339cd-18c2-417c-abea-ef503fa289a4) and click on Share -> Publish.
+## Development Notes
+- We removed Lovable tooling and external AI calls. All AI goes through Ollama locally.
+- Update OpenGraph/Twitter images in `index.html` as needed (currently `/public/placeholder.svg`).
 
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+## Build & Preview
+```sh
+npm run build
+npm run preview
+```
