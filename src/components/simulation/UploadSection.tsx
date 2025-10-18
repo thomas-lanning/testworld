@@ -109,7 +109,7 @@ export const UploadSection = ({ onEntityGenerated, isGenerating, setIsGenerating
             <div className="border-2 border-dashed border-border rounded-lg p-8 text-center cursor-pointer hover:border-primary transition-colors">
               <input
                 type="file"
-                accept=".txt,.pdf,.doc,.docx"
+                accept=".txt"
                 onChange={handleFileChange}
                 className="hidden"
                 id="file-upload"
@@ -120,7 +120,7 @@ export const UploadSection = ({ onEntityGenerated, isGenerating, setIsGenerating
                   {file ? file.name : 'Click to upload or drag and drop'}
                 </p>
                 <p className="text-xs text-muted-foreground mt-2">
-                  PDF, TXT, DOC, DOCX
+                  TXT files only (PDF support coming soon)
                 </p>
               </label>
             </div>

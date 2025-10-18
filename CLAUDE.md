@@ -140,10 +140,51 @@ This project currently has:
 
 When adding tests in the future, consider using Vitest (already Vite-compatible).
 
+## Python API Client
+
+A Python client library is available in `python_api/` for programmatic data population:
+
+### Quick Usage
+```bash
+cd python_api
+pip install -r requirements.txt
+python testworld_client.py  # Test connection
+python example_usage.py      # Run examples
+```
+
+### Common Operations
+```python
+from testworld_client import TestworldClient
+
+client = TestworldClient()
+
+# Create company with AI
+company = client.create_company_from_ai("Company description...")
+
+# Create relationship
+client.create_relationship(
+    source_company_id=company1['id'],
+    target_company_id=company2['id'],
+    label="Partner",
+    strength=0.8
+)
+
+# Query data
+companies = client.get_companies()
+```
+
+### Use Cases
+- **Web scraping**: Automatically populate from Wikipedia, APIs, etc.
+- **Bulk imports**: Load from CSV, JSON, databases
+- **Network generation**: Create simulated company networks
+- **Data migration**: Transfer data from other sources
+
+See `python_api/README.md` for complete documentation.
+
 ## Known Constraints
 
 - No authentication system (all data publicly accessible via RLS policies)
 - Ollama must be running locally before edge functions work
-- File uploads in UI are read client-side, not stored in Supabase Storage
+- File uploads only support `.txt` files (PDFs require parsing library)
 - TypeScript strict mode is disabled, leading to potential runtime errors
 - Network visualization does not support zoom/pan (fixed viewport)
